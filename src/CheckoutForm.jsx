@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import {
   PaymentElement,
   useStripe,
-  useElements
+  useElements,
+  AddressElement
 } from "@stripe/react-stripe-js";
 
 export default function CheckoutForm() {
@@ -30,16 +31,16 @@ export default function CheckoutForm() {
     stripe.retrievePaymentIntent(clientSecret).then(({ paymentIntent }) => {
       switch (paymentIntent.status) {
         case "succeeded":
-          setMessage("Payment succeeded!");
+          setMessage("Pagamento realizado com sucesso!");
           break;
         case "processing":
-          setMessage("Your payment is processing.");
+          setMessage("Seu pagamento está sendo processado.");
           break;
         case "requires_payment_method":
-          setMessage("Your payment was not successful, please try again.");
+          setMessage("Seu pagamento não foi bem-sucedido, tente novamente.");
           break;
         default:
-          setMessage("Something went wrong.");
+          setMessage("Algo deu errado.");
           break;
       }
     });
@@ -60,7 +61,7 @@ export default function CheckoutForm() {
       elements,
       confirmParams: {
         // Make sure to change this to your payment completion page
-        return_url: "http://localhost:3000/",
+        return_url: "http://google.com",
         receipt_email: email,
       },
     });
@@ -90,21 +91,32 @@ export default function CheckoutForm() {
         type="text"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        placeholder="Enter email address"
+        placeholder="Insira seu email"
       />
-      <input type="text" />
+
+        <AddressElement options={{
+          mode: 'shipping',
+          allowedCountries: ['BR'],
+          fields: {
+            phone: 'always',
+          },
+          validation: {
+            phone: {
+              required: 'never',
+            },
+          },
+
+        }} />
 
       <PaymentElement id="payment-element" options={paymentElementOptions} />
       <button disabled={isLoading || !stripe || !elements} id="submit">
         <span id="button-text">
-          {isLoading ? <div className="spinner" id="spinner"></div> : "Pay now"}
+          {isLoading ? <div className="spinner" id="spinner"></div> : "Pague agora"}
         </span>
       </button>
       {/* Show any error or success messages */}
-      {message && <div id="payment-message">{message}</div>}
+        {message && <div id="payment-message">{alert("Pagamento realizado com sucesso!")}</div>}
     </form>
   );
 }
-
-
 

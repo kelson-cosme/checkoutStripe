@@ -12,7 +12,8 @@ const calculateOrderAmount = (items) => {
   // Calculate the order total on the server to prevent
   // people from directly manipulating the amount on the client
 
-  return 2500;
+ return items.reduce((total, item) => total + item.price, 0);
+
 };
 
 app.post("/create-payment-intent", async (req, res) => {
@@ -37,6 +38,4 @@ app.post("/create-payment-intent", async (req, res) => {
 
 
 app.listen(4242, () => console.log("Node server listening on port 4242!"));
-
-
 
